@@ -8,9 +8,10 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 import com.lojinho.bot.command.commands.AvatarCommand;
-import com.lojinho.bot.command.commands.PingCommand;
 import com.lojinho.bot.command.commands.HelpCommand;
-
+import com.lojinho.bot.command.commands.InviteCommand;
+import com.lojinho.bot.command.commands.PingCommand;
+import com.lojinho.bot.command.commands.SupportCommand;
 import com.lojinho.bot.data.Config;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -22,6 +23,8 @@ public class CommandManager {
     addCommand(new PingCommand());
     addCommand(new AvatarCommand());
     addCommand(new HelpCommand());
+    addCommand(new InviteCommand());
+    addCommand(new SupportCommand());
   }
 
   private void addCommand(ICommand cmd) {

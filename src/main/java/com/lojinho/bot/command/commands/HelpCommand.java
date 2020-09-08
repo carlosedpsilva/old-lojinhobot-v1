@@ -16,7 +16,9 @@ public class HelpCommand implements ICommand {
         .setDescription("Aqui vai uma incrivel lista de comandos que esse incrivel bot possui")
         .setColor(new Color(16750336))
         .addField("`loj.ping`", "Retorna Pong! e o ping no momento que foi solicitado", false)
-        .addField("`loj.avatar`", "Use só o comando para ver sua propria foto, ou marque alguem após o comando", false);
+        .addField("`loj.avatar`", "Use só o comando para ver sua propria foto, ou marque alguem após o comando", false)
+        .addField("`loj.invite`", "Me adicione no seu servidor!",false)
+        .addField("`loj.support`", "Contatos para suporte sobre o bot", false);
     ctx.getChannel().sendMessage(eb.build()).queue();
 
   }
