@@ -1,8 +1,20 @@
 package com.lojinho.bot;
 
+import com.lojinho.bot.data.Config;
+
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
+
 public class LojinhoBot {
-  public static void main(String[] args) {
-    System.out.println("Initial commit");
+
+  private LojinhoBot() throws Exception {
+    JDABuilder builder = JDABuilder.createDefault(Config.get("TOKEN"));
+    builder.addEventListeners(new Listener());
+    builder.setActivity(Activity.watching(Config.get("PREFIX") + "help"));
+    builder.build();
   }
 
+  public static void main(final String[] args) throws Exception {
+    new LojinhoBot();
+  }
 }
