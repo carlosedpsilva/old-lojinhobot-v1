@@ -7,22 +7,25 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
-import com.lojinho.bot.command.commands.AvatarCommand;
-import com.lojinho.bot.command.commands.HelpCommand;
-import com.lojinho.bot.command.commands.InviteCommand;
-import com.lojinho.bot.command.commands.PingCommand;
-import com.lojinho.bot.command.commands.SupportCommand;
+import com.lojinho.bot.command.commands.*;
 import com.lojinho.bot.data.Config;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+/**
+ * Gerenciador de Comandos do Bot addCommand - adiciona comandos getCommand -
+ * busca um comando
+ */
 public class CommandManager {
   private final List<ICommand> commands = new ArrayList<>();
 
   public CommandManager() {
+    // Core
+    addCommand(new ShutdownCommand());
+    addCommand(new HelpCommand(this));
     addCommand(new PingCommand());
+    // Info
     addCommand(new AvatarCommand());
-    addCommand(new HelpCommand());
     addCommand(new InviteCommand());
     addCommand(new SupportCommand());
   }
@@ -37,8 +40,12 @@ public class CommandManager {
     commands.add(cmd);
   }
 
+  public List<ICommand> getCommands() {
+    return commands;
+  }
+
   @Nullable
-  private ICommand getCommand(String search) {
+  public ICommand getCommand(String search) {
     String searchLower = search.toLowerCase();
 
     for (ICommand cmd : this.commands) {
@@ -50,9 +57,11 @@ public class CommandManager {
   }
 
   public void handle(GuildMessageReceivedEvent event) {
+    // Separar o comando e os argumentos do prefixo
     String[] split = event.getMessage().getContentRaw().replaceFirst("(?i)" + Pattern.quote(Config.get("PREFIX")), "")
         .split("\\s+");
 
+    // Get the command
     String invoke = split[0].toLowerCase();
     ICommand cmd = this.getCommand(invoke);
 

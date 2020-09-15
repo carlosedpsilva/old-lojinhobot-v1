@@ -5,6 +5,7 @@ import java.awt.*;
 import com.lojinho.bot.command.CommandContext;
 import com.lojinho.bot.command.ICommand;
 
+import com.lojinho.bot.data.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
@@ -40,6 +41,11 @@ public class AvatarCommand implements ICommand {
 	@Override
 	public String getName() {
 		return "avatar";
+	}
+
+	@Override
+	public String getHelp() {
+		return "Retorna o avatar de perfil\n" + "Uso: " + Config.get("PREFIX") + "avatar [@menção]";
 	}
 
 }

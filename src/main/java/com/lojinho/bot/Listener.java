@@ -8,7 +8,6 @@ import com.lojinho.bot.data.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.duncte123.botcommons.BotCommons;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -24,22 +23,12 @@ public class Listener extends ListenerAdapter {
 
   @Override
   public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
-    System.out.println(
-        "We received a message from " + event.getAuthor().getName() + ": " + event.getMessage().getContentDisplay());
-
-    String prefix = Config.get("PREFIX");
     String raw = event.getMessage().getContentRaw();
 
-    // Shutdown
-    if (raw.equalsIgnoreCase(prefix + "shutdown") && event.getAuthor().getId().equals(Config.get("OWNER_ID"))) {
-      LOGGER.info("shutting down");
-      event.getJDA().shutdown();
-      BotCommons.shutdown(event.getJDA());
+    System.out
+        .println("Msg recebida de " + event.getAuthor().getName() + ": " + event.getMessage().getContentDisplay());
 
-      return;
-    }
-
-    if (raw.startsWith(prefix) && event.getAuthor().isBot() == false) {
+    if (raw.startsWith(Config.get("PREFIX")) && event.getAuthor().isBot() == false) {
       manager.handle(event);
     }
   }
