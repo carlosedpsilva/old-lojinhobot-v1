@@ -1,4 +1,4 @@
-package com.lojinho.bot.command.commands;
+package com.lojinho.bot.command.commands.core;
 
 import java.awt.Color;
 import java.util.List;

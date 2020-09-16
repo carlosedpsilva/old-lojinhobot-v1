@@ -1,4 +1,4 @@
-package com.lojinho.bot.command.commands;
+package com.lojinho.bot.command.commands.core;
 
 import com.lojinho.bot.command.CommandContext;
 import com.lojinho.bot.command.ICommand;

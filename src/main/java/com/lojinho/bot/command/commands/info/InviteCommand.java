@@ -1,4 +1,4 @@
-package com.lojinho.bot.command.commands;
+package com.lojinho.bot.command.commands.info;
 
 import java.awt.Color;
 
@@ -10,15 +10,16 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
-public class SupportCommand implements ICommand {
+public class InviteCommand implements ICommand {
 
   @Override
   public void handle(CommandContext ctx) {
     EmbedBuilder eb = new EmbedBuilder();
-
-    eb.setTitle("Lojinho bot Server", "https://discord.gg/CvPvNEb")
-        .setDescription("clique para ser redirecinado ao servidor do Lojinho Bot").setColor(new Color(16750336));
-    ctx.getChannel().sendMessage("Servidor de suporte enviado na DM").queue();
+    eb.setTitle("Clique aqui para adicionar-me em outro servidor",
+        "https://discord.com/oauth2/authorize?client_id=566710691806052360&scope=bot&permissions=8")
+        .setDescription("Agradeço a preferencia").setColor(new Color(16750336))
+        .setImage("https://i.pinimg.com/originals/de/13/5b/de135bd63be0e749c8fe7aee7f5f083a.jpg");
+    ctx.getChannel().sendMessage("link para me adicionar enviado na DM").queue();
     sendPrivateMessage(ctx.getAuthor(), eb.build());
 
   }
@@ -31,12 +32,12 @@ public class SupportCommand implements ICommand {
 
   @Override
   public String getName() {
-    return "support";
+    return "invite";
   }
 
   @Override
   public String getHelp() {
-    return "Contatos para suporte sobre o bot\n" + "Uso: " + Config.get("PREFIX") + "support";
+    return "Me adicione no seu servidor!\n" + "Uso: " + Config.get("PREFIX") + "invite";
   }
 
 }

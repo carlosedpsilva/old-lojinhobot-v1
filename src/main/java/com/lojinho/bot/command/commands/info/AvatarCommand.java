@@ -1,11 +1,11 @@
-package com.lojinho.bot.command.commands;
+package com.lojinho.bot.command.commands.info;
 
-import java.awt.*;
+import java.awt.Color;
 
 import com.lojinho.bot.command.CommandContext;
 import com.lojinho.bot.command.ICommand;
-
 import com.lojinho.bot.data.Config;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
