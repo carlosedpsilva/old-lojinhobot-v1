@@ -29,7 +29,7 @@ public class BanCommand implements ICommand {
         String reason = String.join(" ", args.subList(1, args.size()));
 
         if (!member.hasPermission(Permission.BAN_MEMBERS) || !member.canInteract(target)) {
-            channel.sendMessage("Você não tem permissão para banir alguem >:(").queue();
+            channel.sendMessage("Você não tem permissão para banir alguem :rage:").queue();
             return;
         }
 
@@ -53,7 +53,7 @@ public class BanCommand implements ICommand {
     @Override
     public String getHelp() {
         
-        return "bane o usuario do servidor\n" +
+        return "Exile o membro indesejado 😡\n" +
         "Uso: " + Config.get("PREFIX") + getName() + "<user> <razão>";
     }
     

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
-
 import com.lojinho.bot.command.commands.core.HelpCommand;
 import com.lojinho.bot.command.commands.core.PingCommand;
 import com.lojinho.bot.command.commands.core.ShutdownCommand;
@@ -16,6 +15,7 @@ import com.lojinho.bot.command.commands.info.SupportCommand;
 import com.lojinho.bot.command.commands.moderation.BanCommand;
 import com.lojinho.bot.command.commands.moderation.DelmsgCommand;
 import com.lojinho.bot.command.commands.moderation.KickCommand;
+
 import com.lojinho.bot.data.Config;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;

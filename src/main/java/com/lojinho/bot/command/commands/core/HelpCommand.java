@@ -32,12 +32,14 @@ public class HelpCommand implements ICommand {
     {
       eb.setTitle("Comandos do Incrivel LojinhoBot")
           .setDescription("Aqui vai uma incrivel lista de comandos que esse incrivel bot possui")
-          .setColor(new Color(16750336))
-          .addField("`loj.ping`", "Retorna Pong! e o ping no momento que foi solicitado", false)
-          .addField("`loj.avatar`", "Retorna o avatar de perfil", false)
-          .addField("`loj.invite`", "Me adicione no seu servidor!", false)
-          .addField("`loj.support`", "Contatos para suporte sobre o bot", false);
-      ctx.getChannel().sendMessage(eb.build()).queue();
+          .setColor(new Color(16750336));
+          for(ICommand command : manager.getCommands())
+          {
+            if (command.getHelp() != null) {
+              eb.addField("`" + command.getName() + "`", command.getHelp(), false);
+            }
+          }
+      channel.sendMessage(eb.build()).queue();
       return;
     }
 
@@ -45,9 +47,9 @@ public class HelpCommand implements ICommand {
     ICommand command = manager.getCommand(search);
     if (command.getHelp() != null)
     {
-      eb.addField("`" + command.getName() + "`", "" + command.getHelp(), false)
+      eb.addField("`" + command.getName() + "`", command.getHelp(), false)
               .setColor(new Color(16750336));
-      ctx.getChannel().sendMessage(eb.build()).queue();
+              channel.sendMessage(eb.build()).queue();
     }
   }
 
@@ -58,7 +60,7 @@ public class HelpCommand implements ICommand {
 
   @Override
   public String getHelp() {
-    return "Mostra uma lista com os comandos do LojinhoBot\n" + "Uso: " + Config.get("TOKEN") + "help [comando]";
+    return "Mostra uma lista com os comandos do LojinhoBot\n" + "Uso: " + Config.get("PREFIX") + "help [comando]";
   }
 
 }
