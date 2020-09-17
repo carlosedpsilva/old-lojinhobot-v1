@@ -21,17 +21,17 @@ public class UnbanCommand implements ICommand {
 
 
         if (!ctx.getMember().hasPermission(Permission.BAN_MEMBERS)) {
-            channel.sendMessage("You need the Ban Members permission to use this command.").queue();
+            channel.sendMessage("Você precisa da permissão de ban para poder usar esse comando").queue();
             return;
         }
 
         if (!ctx.getGuild().getSelfMember().hasPermission(Permission.BAN_MEMBERS)) {
-            channel.sendMessage("I need the Ban Members permission to unban members.").queue();
+            channel.sendMessage("Eu não tenho permissão para banir").queue();
             return;
         }
 
         if (args.isEmpty()) {
-            channel.sendMessage("Usage: `" + Config.get("PREFIX") + getName() + " <username/user id/username#disc>`").queue();
+            channel.sendMessage("uso: `" + Config.get("PREFIX") + getName() + " <username/user id/username#disc>`").queue();
             return;
         }
 
@@ -41,7 +41,7 @@ public class UnbanCommand implements ICommand {
                     .map(Guild.Ban::getUser).collect(Collectors.toList());
 
             if (goodUsers.isEmpty()) {
-                channel.sendMessage("This user is not banned").queue();
+                channel.sendMessage("este usuario não está banido").queue();
                 return;
             }
 
@@ -51,9 +51,9 @@ public class UnbanCommand implements ICommand {
             String bannedUser = String.format("%#s", target);
 
             ctx.getGuild().unban(target)
-                    .reason("Unbanned By " + mod).queue();
+                    .reason("desbanido By " + mod).queue();
 
-            channel.sendMessage("User " + bannedUser + " unbanned.").queue();
+            channel.sendMessage("usuario " + bannedUser + " desbanido.").queue();
 
         });
 		

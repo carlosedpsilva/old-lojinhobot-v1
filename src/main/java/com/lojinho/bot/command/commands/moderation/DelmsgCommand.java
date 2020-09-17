@@ -21,8 +21,7 @@ public class DelmsgCommand implements ICommand {
         TextChannel channel = ctx.getChannel();
         Member member = ctx.getMember();
         Member selfMember = ctx.getGuild().getSelfMember();
-
-
+        
 
         if(!member.hasPermission(Permission.MESSAGE_MANAGE)){
             channel.sendMessage("Você precisa da permissão para alterar as mensagens").queue();
@@ -98,4 +97,5 @@ public class DelmsgCommand implements ICommand {
     public String getHelp() {
         return "deleta o numero de mensagens solcitado, numa faixa de 2 a 100 mensagens \n"  + "Uso: " + Config.get("PREFIX") + getName() + "<quantidade>";
     }
+    
 }

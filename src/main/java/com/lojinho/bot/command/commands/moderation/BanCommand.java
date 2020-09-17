@@ -30,7 +30,7 @@ public class BanCommand implements ICommand {
         String reason = String.join(" ", args.subList(1, args.size()));
 
         if (!member.hasPermission(Permission.BAN_MEMBERS) || !member.canInteract(target)) {
-            channel.sendMessage("Você não tem permissão para banir alguem :rage:").queue();
+            channel.sendMessage("Você não tem permissão para banir alguem ").queue();
             return;
         }
 

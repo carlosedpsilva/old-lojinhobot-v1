@@ -17,6 +17,7 @@ import com.lojinho.bot.command.commands.moderation.DelmsgCommand;
 import com.lojinho.bot.command.commands.moderation.KickCommand;
 
 import com.lojinho.bot.command.commands.moderation.UnbanCommand;
+import com.lojinho.bot.command.commands.moderation.WarnCommand;
 import com.lojinho.bot.data.Config;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -42,6 +43,7 @@ public class CommandManager {
     addCommand(new KickCommand());
     addCommand(new BanCommand());
     addCommand(new UnbanCommand());
+    addCommand(new WarnCommand());
   }
 
   private void addCommand(ICommand cmd) {
