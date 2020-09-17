@@ -20,7 +20,8 @@ public class BanCommand implements ICommand {
         List<Member> mentionedMembers = ctx.getMessage().getMentionedMembers();
         final List<String> args = ctx.getArgs();
 
-        if (mentionedMembers.isEmpty() || args.size() < 2) {
+        System.out.println(args);
+        if (mentionedMembers.isEmpty()) {
             channel.sendMessage("Está Faltando argumentos ").queue();
             return;
         }

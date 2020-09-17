@@ -36,7 +36,7 @@ public class HelpCommand implements ICommand {
           for(ICommand command : manager.getCommands())
           {
             if (command.getHelp() != null) {
-              eb.addField("`" + command.getName() + "`", command.getHelp(), false);
+              eb.addField("`" + command.getName() + "`", "" + command.getHelp(), false);
             }
           }
       channel.sendMessage(eb.build()).queue();
@@ -45,11 +45,10 @@ public class HelpCommand implements ICommand {
 
     String search = args.get(0);
     ICommand command = manager.getCommand(search);
-    if (command.getHelp() != null)
-    {
-      eb.addField("`" + command.getName() + "`", command.getHelp(), false)
+    if (command != null && command.getHelp() != null) {
+      eb.addField("`" + command.getName() + "`", "" + command.getHelp(), false)
               .setColor(new Color(16750336));
-              channel.sendMessage(eb.build()).queue();
+      channel.sendMessage(eb.build()).queue();
     }
   }
 
@@ -62,5 +61,4 @@ public class HelpCommand implements ICommand {
   public String getHelp() {
     return "Mostra uma lista com os comandos do LojinhoBot\n" + "Uso: " + Config.get("PREFIX") + "help [comando]";
   }
-
-}
+  }

@@ -1,4 +1,4 @@
-package com.lojinho.bot;
+package com.lojinho.bot.core;
 
 import javax.annotation.Nonnull;
 
@@ -12,8 +12,8 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class Listener extends ListenerAdapter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);
+public class LojinhoListener extends ListenerAdapter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(LojinhoListener.class);
   private final CommandManager manager = new CommandManager();
 
   @Override
@@ -28,7 +28,7 @@ public class Listener extends ListenerAdapter {
     System.out
         .println("Msg recebida de " + event.getAuthor().getName() + ": " + event.getMessage().getContentDisplay());
 
-    if (raw.startsWith(Config.get("PREFIX")) && event.getAuthor().isBot() == false) {
+    if (raw.startsWith(Config.get("PREFIX")) && !event.getAuthor().isBot()) {
       manager.handle(event);
     }
   }
