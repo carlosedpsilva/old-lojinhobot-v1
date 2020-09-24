@@ -1,6 +1,6 @@
 package com.lojinho.bot;
 
-import com.lojinho.bot.core.LojinhoListener;
+import com.lojinho.bot.core.listeners.LojinhoListener;
 import com.lojinho.bot.data.Config;
 
 import net.dv8tion.jda.api.JDABuilder;
@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Activity;
 
 public class LojinhoBot {
 
+  // Buildando o Objeto JDA
   private LojinhoBot() throws Exception {
     JDABuilder builder = JDABuilder.createDefault(Config.get("TOKEN"));
     builder.addEventListeners(new LojinhoListener());
@@ -16,6 +17,6 @@ public class LojinhoBot {
   }
 
   public static void main(final String[] args) throws Exception {
-  new LojinhoBot();
+    new LojinhoBot();
   }
 }

@@ -30,13 +30,33 @@ public class SupportCommand implements ICommand {
   }
 
   @Override
+  public String getCategory() {
+    return "Info";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Support Command";
+  }
+
+  @Override
   public String getName() {
     return "support";
   }
 
   @Override
   public String getHelp() {
-    return "Contatos para suporte sobre o bot\n" + "Uso: " + Config.get("PREFIX") + "support";
+    return "Envia um link de convite o servidor de suporte do LojinhoBot para a sua DM.";
+  }
+
+  @Override
+  public String getUsage() {
+    return Config.get("PREFIX") + this.getName();
+  }
+
+  @Override
+  public String getParameters() {
+    return null;
   }
 
 }

@@ -21,21 +21,20 @@ public class DelmsgCommand implements ICommand {
         TextChannel channel = ctx.getChannel();
         Member member = ctx.getMember();
         Member selfMember = ctx.getGuild().getSelfMember();
-        
 
-        if(!member.hasPermission(Permission.MESSAGE_MANAGE)){
+        if (!member.hasPermission(Permission.MESSAGE_MANAGE)) {
             channel.sendMessage("Você precisa da permissão para alterar as mensagens").queue();
-            
+
             return;
         }
 
-        if(!selfMember.hasPermission(Permission.MESSAGE_MANAGE)){
+        if (!selfMember.hasPermission(Permission.MESSAGE_MANAGE)) {
             channel.sendMessage("Eu preciso da permissão para alterar as mensagens").queue();
 
             return;
         }
 
-        if(ctx.getArgs().isEmpty()) {
+        if (ctx.getArgs().isEmpty()) {
             channel.sendMessage("uso correto é: " + Config.get("PREFIX") + getName() + "<quantidade>").queue();
 
             return;
@@ -46,56 +45,69 @@ public class DelmsgCommand implements ICommand {
 
         try {
             quant = Integer.parseInt(arg);
-        } catch(NumberFormatException ignored){
+        } catch (NumberFormatException ignored) {
             channel.sendMessageFormat("´%s´ não é um numero valido", arg).queue();
 
             return;
         }
 
-        if(quant < 2 || quant > 100) {
+        if (quant < 2 || quant > 100) {
             channel.sendMessage(" a quantidade tem que ser entre 2 e 100").queue();
 
             return;
         }
 
-        channel.getIterableHistory()
-            .takeAsync(quant+1)
-            .thenApplyAsync((messages) -> {
-                List<Message> goodMessages = messages.stream()
-                        .filter((m) -> m.getTimeCreated().isBefore(
-                                OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)
-                        ))
-                        .collect(Collectors.toList());
+        channel.getIterableHistory().takeAsync(quant + 1).thenApplyAsync((messages) -> {
+            List<Message> goodMessages = messages.stream()
+                    .filter((m) -> m.getTimeCreated().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
+                    .collect(Collectors.toList());
 
-                channel.purgeMessages(goodMessages);
+            channel.purgeMessages(goodMessages);
 
-                return goodMessages.size();
-            })
-            .whenCompleteAsync(
-                (count, thr) -> channel.sendMessageFormat("Apagado `%d` messages", count-1).queue(
-                    (message) -> message.delete().queueAfter(10, TimeUnit.SECONDS)
-                )
-            )
-            .exceptionally((thr) -> {
-                String cause = "";
+            return goodMessages.size();
+        }).whenCompleteAsync((count, thr) -> channel.sendMessageFormat("Apagado `%d` messages", count - 1)
+                .queue((message) -> message.delete().queueAfter(10, TimeUnit.SECONDS))).exceptionally((thr) -> {
+                    String cause = "";
 
-            if (thr.getCause() != null) {
-                cause = " caused by: " + thr.getCause().getMessage();
-            }
+                    if (thr.getCause() != null) {
+                        cause = " caused by: " + thr.getCause().getMessage();
+                    }
 
-            channel.sendMessageFormat("Error: %s%s", thr.getMessage(), cause).queue();
+                    channel.sendMessageFormat("Error: %s%s", thr.getMessage(), cause).queue();
 
-            return 0;
-        });
-        
+                    return 0;
+                });
+
     }
+
+    @Override
+    public String getCategory() {
+        return "Moderation";
+    }
+
+    @Override
+    public String getTitle() {
+        return "Delmsg Command";
+    }
+
     @Override
     public String getName() {
         return "delmsg";
     }
+
     @Override
     public String getHelp() {
-        return "deleta o numero de mensagens solcitado, numa faixa de 2 a 100 mensagens \n"  + "Uso: " + Config.get("PREFIX") + getName() + "<quantidade>";
+        return "Deleta o numero de mensagens solcitado, numa faixa de 2 a 100 mensagens.";
     }
-    
+
+    @Override
+    public String getUsage() {
+        return Config.get("PREFIX") + this.getName() + " <quantidade>";
+    }
+
+    @Override
+    public String getParameters() {
+        return "`quantidade` - Número de mensagens a serem deletadas.";
+    }
+
 }

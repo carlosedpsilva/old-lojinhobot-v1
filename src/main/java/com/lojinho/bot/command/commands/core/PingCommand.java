@@ -13,7 +13,16 @@ public class PingCommand implements ICommand {
     JDA jda = ctx.getJDA();
     jda.getRestPing().queue((ping) -> ctx.getChannel()
         .sendMessageFormat("Reset ping: %sms \nWS ping: %sms ", ping, jda.getGatewayPing()).queue());
+  }
 
+  @Override
+  public String getCategory() {
+    return "Core";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Ping Command";
   }
 
   @Override
@@ -23,6 +32,16 @@ public class PingCommand implements ICommand {
 
   @Override
   public String getHelp() {
-    return "Retorna Pong! e o ping no momento que foi solicitado\n" + "Uso: " + Config.get("PREFIX") + "ping";
+    return "Retorna uma latência que na prática não significa muita coisa.\n";
+  }
+
+  @Override
+  public String getUsage() {
+    return Config.get("PREFIX") + this.getName();
+  }
+
+  @Override
+  public String getParameters() {
+    return null;
   }
 }

@@ -23,12 +23,32 @@ public class ShutdownCommand implements ICommand {
   }
 
   @Override
+  public String getCategory() {
+    return "Core";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Shutdown Command";
+  }
+
+  @Override
   public String getName() {
     return "shutdown";
   }
 
   @Override
   public String getHelp() {
+    return null;
+  }
+
+  @Override
+  public String getUsage() {
+    return Config.get("PREFIX") + this.getName();
+  }
+
+  @Override
+  public String getParameters() {
     return null;
   }
 
