@@ -46,8 +46,6 @@ public class HelpCommand implements ICommand {
           }
         }
 
-        System.out.println(manager.getCategories().keySet());
-
         commandsInThisCategory = commandsInThisCategory.stream().map(s -> "`" + s).collect(Collectors.toList());
         commandsInThisCategory = commandsInThisCategory.stream().map(s -> s + "`").collect(Collectors.toList());
 

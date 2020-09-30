@@ -20,6 +20,10 @@ public class KickCommand implements ICommand {
         final Member member = ctx.getMember();
         final List<String> args = ctx.getArgs();
 
+        if (!args.isEmpty()) {
+
+        }
+
         if (args.size() < 2 || message.getMentionedMembers().isEmpty()) {
             channel.sendMessage("está faltando argumentos").queue();
             return;

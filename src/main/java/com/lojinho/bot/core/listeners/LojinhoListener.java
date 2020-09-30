@@ -3,7 +3,7 @@ package com.lojinho.bot.core.listeners;
 import javax.annotation.Nonnull;
 
 import com.lojinho.bot.command.CommandManager;
-import com.lojinho.bot.data.Config;
+import com.lojinho.bot.db.DatabaseManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +29,17 @@ public class LojinhoListener extends ListenerAdapter {
   /** Mensagem recebida no servidor */
   @Override
   public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
+
+    if (event.getAuthor().isBot()) {
+      return;
+    }
+
+    final long guildId = event.getGuild().getIdLong();
+    String prefix = DatabaseManager.INSTANCE.getPrefix(guildId);
     String raw = event.getMessage().getContentRaw();
 
-    System.out
-        .println("Msg recebida de " + event.getAuthor().getName() + ": " + event.getMessage().getContentDisplay());
-
-    if (raw.startsWith(Config.get("PREFIX")) && !event.getAuthor().isBot()) {
-      manager.handle(event);
+    if (raw.startsWith(prefix)) {
+      manager.handle(event, prefix);
     }
   }
 

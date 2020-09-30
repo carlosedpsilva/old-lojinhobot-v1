@@ -15,10 +15,16 @@ repositories {
 }
 
 dependencies {
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    // JDA
     implementation 'net.dv8tion:JDA:4.2.0_200'
     implementation 'com.jagrosh:jda-utilities:3.0.4'
     implementation group: 'me.duncte123', name: 'botCommons', version: 'BETA_2.0.110'
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
+    // DB
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
+    // DOTENV
     implementation 'io.github.cdimascio:java-dotenv:5.2.1'
+    // TEST
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 }

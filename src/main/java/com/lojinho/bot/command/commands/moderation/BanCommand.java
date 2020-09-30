@@ -1,6 +1,9 @@
 package com.lojinho.bot.command.commands.moderation;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.lojinho.bot.command.CommandContext;
 import com.lojinho.bot.command.ICommand;
@@ -14,38 +17,94 @@ public class BanCommand implements ICommand {
 
     @Override
     public void handle(CommandContext ctx) {
+        final TextChannel channel = ctx.getChannel();
         final List<String> args = ctx.getArgs();
-        TextChannel channel = ctx.getChannel();
 
+        // Tratamento dos opções
+        LinkedHashMap<String, Integer> optionIndexes = new LinkedHashMap<String, Integer>();
+        ArrayList<List<String>> argsSections = new ArrayList<List<String>>();
+
+        {
+            int i = 0;
+            List<String> listOfArgs = null;
+            for (String arg : args) {
+                listOfArgs = new ArrayList<String>();
+                if (arg.startsWith("--")) {
+                    optionIndexes.put(arg.replaceFirst("(?i)" + Pattern.quote("--"), ""), i);
+                    argsSections.add(listOfArgs);
+                    i++;
+                } else {
+                    listOfArgs.add(arg);
+                }
+            }
+            argsSections.add(listOfArgs);
+        }
+
+        // Default parameters missing
+        if (optionIndexes.containsValue(0)) {
+            return;
+        }
+
+        // Tratamento de menções
+        List<Member> members = ctx.getGuild().getMembers();
+        List<Member> mentionedMembers = new ArrayList<Member>();
+        int cont = 0;
+
+        for (String arg : argsSections.get(0)) {
+            int i = 0;
+            for (Member target : members) {
+                if (arg.equals(String.valueOf(target.getUser().getAsMention()))
+                        || arg.equals(String.valueOf(target.getUser().getIdLong()))
+                        || arg.equals(target.getUser().getAsTag()) || arg.equals(target.getUser().getName())) {
+                    if (++i > 1) {
+                        channel.sendMessage(String.format(
+                                "Muitos membros encontrados com '%s', refine sua busca (ex. usando name#discriminator)",
+                                arg)).queue();
+                    } else {
+                        mentionedMembers.add(target);
+                        cont++;
+                    }
+                }
+            }
+        }
+
+        // Tratamento de permissões
         Member member = ctx.getMember();
         Member selfMember = ctx.getGuild().getSelfMember();
 
-        List<Member> mentionedMembers = ctx.getMessage().getMentionedMembers();
+        for (Member target : mentionedMembers) {
+            if (!member.hasPermission(Permission.BAN_MEMBERS) || !member.canInteract(target)) {
+                channel.sendMessage("Você não possui permissão para utilizar este comando.").queue();
+                return;
+            }
 
-        System.out.println(args);
-        if (mentionedMembers.isEmpty()) {
-            channel.sendMessage("Está Faltando argumentos ").queue();
-            return;
+            if (!selfMember.hasPermission(Permission.BAN_MEMBERS) || !selfMember.canInteract(target)) {
+                channel.sendMessage("Não possuo permissões para banir ou não posso banir este usuário.").queue();
+                return;
+            }
         }
 
-        Member target = mentionedMembers.get(0);
-        String reason = String.join(" ", args.subList(1, args.size()));
+        // Ban Process
 
-        if (!member.hasPermission(Permission.BAN_MEMBERS) || !member.canInteract(target)) {
-            channel.sendMessage("Você não tem permissão para banir alguem ").queue();
-            return;
+        String reason = null;
+
+        String type = "Single";
+
+        if (optionIndexes.containsKey("reason")) {
+            reason = String.join(" ", argsSections.get(optionIndexes.get("reason")));
         }
 
-        if (!selfMember.hasPermission(Permission.BAN_MEMBERS) || !selfMember.canInteract(target)) {
-            channel.sendMessage("Eu não posso banir este usuario ou eu não tenho a permissão de banir usuarios")
+        if (mentionedMembers.size() > 1) {
+            type = "Multiple";
+        }
+
+        for (Member target : mentionedMembers) {
+            ctx.getGuild().ban(target, 1)
+                    .reason(String.format("Ban type: %s, by: %#s, with reason: %s", type, ctx.getAuthor(), reason))
                     .queue();
-            return;
         }
 
-        ctx.getGuild().ban(target, 1).reason(String.format("Ban by: %#s, with reason: %s", ctx.getAuthor(), reason))
-                .queue();
-
-        channel.sendMessage("Success!").queue();
+        channel.sendMessage(String.format("Adm Hammer swinged successufuly. %d usuário(s) banido(s)", cont)).queue();
 
     }
 

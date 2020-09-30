@@ -8,7 +8,7 @@ public class SoftBanCommand implements ICommand {
 
   @Override
   public void handle(CommandContext ctx) {
-
+    return;
   }
 
   @Override
@@ -28,7 +28,7 @@ public class SoftBanCommand implements ICommand {
 
   @Override
   public String getHelp() {
-    return "help";
+    return "Expulsa um usuário e deleta suas mensagens das últimas 24 horas.";
   }
 
   @Override

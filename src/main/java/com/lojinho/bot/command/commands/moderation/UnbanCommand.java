@@ -58,6 +58,13 @@ public class UnbanCommand implements ICommand {
 
     }
 
+    private boolean isCorrectUser(Guild.Ban ban, String arg) {
+        User bannedUser = ban.getUser();
+
+        return bannedUser.getName().equalsIgnoreCase((arg)) || bannedUser.getId().equalsIgnoreCase(arg)
+                || String.format("%#s", bannedUser).equalsIgnoreCase(arg);
+    }
+
     @Override
     public String getCategory() {
         return "Moderation";
@@ -77,13 +84,6 @@ public class UnbanCommand implements ICommand {
     public String getHelp() {
 
         return "Desexila um membro banido\n" + "Uso: " + Config.get("PREFIX") + this.getName() + "<user>";
-    }
-
-    private boolean isCorrectUser(Guild.Ban ban, String arg) {
-        User bannedUser = ban.getUser();
-
-        return bannedUser.getName().equalsIgnoreCase((arg)) || bannedUser.getId().equalsIgnoreCase(arg)
-                || String.format("%#s", bannedUser).equalsIgnoreCase(arg);
     }
 
     @Override

@@ -83,8 +83,7 @@ public class WarnCommand implements ICommand {
 
     @Override
     public String getHelp() {
-        return "envia uma mensagem de aviso ao usuario marcado" + "Uso: " + Config.get("PREFIX") + this.getName()
-                + "<user>";
+        return "Envia um aviso ao usuario mencioando.";
     }
 
     @Override
