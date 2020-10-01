@@ -1,4 +1,4 @@
-package com.lojinho.bot.command.commands.core;
+package com.lojinho.bot.command.commands.owner;
 
 import com.lojinho.bot.command.CommandContext;
 import com.lojinho.bot.command.ICommand;
@@ -24,7 +24,7 @@ public class ShutdownCommand implements ICommand {
 
   @Override
   public String getCategory() {
-    return "Core";
+    return "Owner";
   }
 
   @Override

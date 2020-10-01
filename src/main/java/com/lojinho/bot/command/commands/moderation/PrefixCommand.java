@@ -21,19 +21,21 @@ public class PrefixCommand implements ICommand {
     final long guildId = ctx.getGuild().getIdLong();
 
     // Tratar permissões
+    if (args.isEmpty()) {
+      channel.sendMessage("Prefix: `" + DatabaseManager.INSTANCE.getPrefix(guildId) + "`").queue();
+      return;
+    }
+
     if (!member.hasPermission(Permission.MANAGE_CHANNEL)) {
       channel.sendMessage("Você deve possuir a permissão Gerenciar Canais para usar este comando").queue();
       return;
     }
 
-    if (args.isEmpty()) {
-      channel.sendMessage("Prefix: " + DatabaseManager.INSTANCE.getPrefix(guildId)).queue();
-      return;
+    if (args.get(0).equals("set")) {
+      final String newPrefix = String.join("", args.subList(1, args.size()));
+      this.updatePrefix(guildId, newPrefix);
+      channel.sendMessage(String.format("Prefixo alterado com sucesso! Novo prefixo: %s", newPrefix)).queue();
     }
-
-    final String newPrefix = String.join("", args);
-    this.updatePrefix(guildId, newPrefix);
-    channel.sendMessage("Prefixo alterado com sucesso!").queue();
   }
 
   @Override

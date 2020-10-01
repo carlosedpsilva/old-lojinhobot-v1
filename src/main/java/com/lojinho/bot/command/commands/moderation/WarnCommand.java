@@ -22,8 +22,9 @@ public class WarnCommand implements ICommand {
         Member member = ctx.getMember();
         Member selfMember = ctx.getGuild().getSelfMember();
         List<Member> mentionedMembers = ctx.getMessage().getMentionedMembers();
-        TextChannel logChannel = ctx.getGuild().getTextChannelById(756186559832653955L);
         final List<String> args = ctx.getArgs();
+        // Implementar registro de canais de log depois
+        TextChannel logChannel = ctx.getGuild().getTextChannelById(756186559832653955L);
 
         if (mentionedMembers.isEmpty()) {
             channel.sendMessage("Está Faltando argumentos ").queue();
@@ -46,7 +47,7 @@ public class WarnCommand implements ICommand {
         // logChannel.sendMessage("Warn enviado para: " + target.getAsMention() + "\n
         // Conteudo: "+ reason ).queue();
         EmbedBuilder log = new EmbedBuilder();
-        log.setTitle("Warn enviado").setColor(Color.YELLOW)
+        log.setAuthor("Warn log", null, target.getUser().getAvatarUrl()).setColor(Color.YELLOW)
                 .addField("Usuario: ", "\t" + target.getUser().getAsMention(), false)
                 .addField("banido por: ", "\t" + ctx.getAuthor().getAsMention(), false)
                 .addField("Motivo: ", "\t" + reason, false);

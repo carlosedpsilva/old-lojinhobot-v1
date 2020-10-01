@@ -1,16 +1,23 @@
 package com.lojinho.bot.command.commands.moderation;
 
+import java.awt.Color;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.lojinho.bot.command.CommandContext;
 import com.lojinho.bot.command.ICommand;
 import com.lojinho.bot.data.Config;
+import com.lojinho.bot.utils.Utils;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class BanCommand implements ICommand {
@@ -20,24 +27,34 @@ public class BanCommand implements ICommand {
         final TextChannel channel = ctx.getChannel();
         final List<String> args = ctx.getArgs();
 
-        // Tratamento dos opções
+        // Implementar registro de canais de log depois
+        TextChannel logChannel = ctx.getGuild().getTextChannelById(756186559832653955L);
+
+        // Tratamento de opções
         LinkedHashMap<String, Integer> optionIndexes = new LinkedHashMap<String, Integer>();
         ArrayList<List<String>> argsSections = new ArrayList<List<String>>();
 
         {
-            int i = 0;
-            List<String> listOfArgs = null;
+            int index = 0;
+            if (!args.get(0).startsWith("--")) {
+                index++;
+            }
+            List<String> listOfArgs = new ArrayList<>();
             for (String arg : args) {
-                listOfArgs = new ArrayList<String>();
                 if (arg.startsWith("--")) {
-                    optionIndexes.put(arg.replaceFirst("(?i)" + Pattern.quote("--"), ""), i);
+                    // Nova seção de opção
+                    optionIndexes.put(arg.replaceFirst("(?i)" + Pattern.quote("--"), ""), index);
                     argsSections.add(listOfArgs);
-                    i++;
+                    listOfArgs = new ArrayList<String>();
+                    index++;
                 } else {
                     listOfArgs.add(arg);
                 }
             }
-            argsSections.add(listOfArgs);
+            // Últimos parâmetros
+            if (!listOfArgs.isEmpty()) {
+                argsSections.add(listOfArgs);
+            }
         }
 
         // Default parameters missing
@@ -46,26 +63,22 @@ public class BanCommand implements ICommand {
         }
 
         // Tratamento de menções
-        List<Member> members = ctx.getGuild().getMembers();
-        List<Member> mentionedMembers = new ArrayList<Member>();
-        int cont = 0;
+        List<String> invalidMentions = new ArrayList<>();
+        List<Member> mentionedMembers = new ArrayList<>();
 
         for (String arg : argsSections.get(0)) {
-            int i = 0;
-            for (Member target : members) {
-                if (arg.equals(String.valueOf(target.getUser().getAsMention()))
-                        || arg.equals(String.valueOf(target.getUser().getIdLong()))
-                        || arg.equals(target.getUser().getAsTag()) || arg.equals(target.getUser().getName())) {
-                    if (++i > 1) {
-                        channel.sendMessage(String.format(
-                                "Muitos membros encontrados com '%s', refine sua busca (ex. usando name#discriminator)",
-                                arg)).queue();
-                    } else {
-                        mentionedMembers.add(target);
-                        cont++;
-                    }
-                }
+            Member target = Utils.findMember(ctx.getEvent(), ctx.getMember(), arg);
+            if (target == null) {
+                invalidMentions.add(arg);
+            } else {
+                mentionedMembers.add(target);
             }
+        }
+
+        // Nenhum usuário encontrado
+        if (mentionedMembers.isEmpty()) {
+            channel.sendMessage("Nenhum usuário encontrado.").queue();
+            return;
         }
 
         // Tratamento de permissões
@@ -74,7 +87,7 @@ public class BanCommand implements ICommand {
 
         for (Member target : mentionedMembers) {
             if (!member.hasPermission(Permission.BAN_MEMBERS) || !member.canInteract(target)) {
-                channel.sendMessage("Você não possui permissão para utilizar este comando.").queue();
+                channel.sendMessage("Você não possui permissões para utilizar este comando.").queue();
                 return;
             }
 
@@ -85,10 +98,10 @@ public class BanCommand implements ICommand {
         }
 
         // Ban Process
-
-        String reason = null;
-
+        String reason = "Não especificado.";
         String type = "Single";
+        int delDays = 0;
+        String delMsg = "";
 
         if (optionIndexes.containsKey("reason")) {
             reason = String.join(" ", argsSections.get(optionIndexes.get("reason")));
@@ -98,14 +111,37 @@ public class BanCommand implements ICommand {
             type = "Multiple";
         }
 
-        for (Member target : mentionedMembers) {
-            ctx.getGuild().ban(target, 1)
-                    .reason(String.format("Ban type: %s, by: %#s, with reason: %s", type, ctx.getAuthor(), reason))
-                    .queue();
+        if (optionIndexes.containsKey("days")) {
+            delDays = Integer.valueOf(argsSections.get(optionIndexes.get("days")).get(0));
+            delMsg = String.format("Mensagens dos últimos %d dias apagadas.", delDays);
         }
 
-        channel.sendMessage(String.format("Adm Hammer swinged successufuly. %d usuário(s) banido(s)", cont)).queue();
+        EmbedBuilder eb;
+        List<Member> errMembers = new ArrayList<>();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        for (Member target : mentionedMembers) {
+            eb = new EmbedBuilder();
+            eb.setAuthor("Ban log", null, target.getUser().getAvatarUrl()).setColor(Color.decode("#ff2a0e"));
+            eb.setDescription(String.format(
+                    "**User:** %#s\n**Moderator:** %#s\n**Type:** %s\n**Reason:** %s\n**Date:** `%s`", target.getUser(),
+                    member.getUser(), type, reason, dtf.format(LocalDateTime.now()).toString()));
+            MessageEmbed log = eb.build();
+            String auditLog = String.format("Ban by %#s with reason '%s'", member.getUser(), reason);
+            ctx.getGuild().ban(target, delDays, auditLog).reason(auditLog)
+                    .queue((__) -> logChannel.sendMessage(log).queue(), (error) -> errMembers.add(target));
+        }
 
+        if (errMembers.size() != mentionedMembers.size()) {
+            channel.sendMessage(String.format("Ação moderativa realizada com sucesso. %d usuário(s) banido(s). %s",
+                    mentionedMembers.size() - errMembers.size(), delMsg)).queue();
+        }
+
+        if (!errMembers.isEmpty()) {
+            channel.sendMessage(String.format("Não foi possível expulsar: %s",
+                    errMembers.stream().limit(7).map(m -> m.getUser().getName() + "#" + m.getUser().getDiscriminator())
+                            .collect(Collectors.joining(", "))))
+                    .queue();
+        }
     }
 
     @Override

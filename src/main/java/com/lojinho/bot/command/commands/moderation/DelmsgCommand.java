@@ -19,6 +19,8 @@ public class DelmsgCommand implements ICommand {
     @Override
     public void handle(CommandContext ctx) {
         TextChannel channel = ctx.getChannel();
+
+        // Tratamento de permissões
         Member member = ctx.getMember();
         Member selfMember = ctx.getGuild().getSelfMember();
 
@@ -34,30 +36,30 @@ public class DelmsgCommand implements ICommand {
             return;
         }
 
+        // Default parameters is missing
         if (ctx.getArgs().isEmpty()) {
-            channel.sendMessage("uso correto é: " + Config.get("PREFIX") + getName() + "<quantidade>").queue();
-
             return;
         }
 
-        int quant;
+        // Tratamento de parâmetros
+        int qtde;
         String arg = ctx.getArgs().get(0);
 
         try {
-            quant = Integer.parseInt(arg);
+            qtde = Integer.parseInt(arg);
         } catch (NumberFormatException ignored) {
-            channel.sendMessageFormat("´%s´ não é um numero valido", arg).queue();
+            channel.sendMessageFormat("´%s´ não é um numero valido.", arg).queue();
 
             return;
         }
 
-        if (quant < 2 || quant > 100) {
-            channel.sendMessage(" a quantidade tem que ser entre 2 e 100").queue();
-
+        if (qtde < 2 || qtde > 100) {
+            channel.sendMessage("A quantidade tem que ser entre 2 e 100").queue();
             return;
         }
 
-        channel.getIterableHistory().takeAsync(quant + 1).thenApplyAsync((messages) -> {
+        // Delete process
+        channel.getIterableHistory().takeAsync(qtde + 1).thenApplyAsync((messages) -> {
             List<Message> goodMessages = messages.stream()
                     .filter((m) -> m.getTimeCreated().isBefore(OffsetDateTime.now().plus(2, ChronoUnit.WEEKS)))
                     .collect(Collectors.toList());
@@ -65,7 +67,7 @@ public class DelmsgCommand implements ICommand {
             channel.purgeMessages(goodMessages);
 
             return goodMessages.size();
-        }).whenCompleteAsync((count, thr) -> channel.sendMessageFormat("Apagado `%d` messages", count - 1)
+        }).whenCompleteAsync((count, thr) -> channel.sendMessageFormat("Apagado `%d` mensagens", count - 1)
                 .queue((message) -> message.delete().queueAfter(10, TimeUnit.SECONDS))).exceptionally((thr) -> {
                     String cause = "";
 
@@ -77,7 +79,6 @@ public class DelmsgCommand implements ICommand {
 
                     return 0;
                 });
-
     }
 
     @Override

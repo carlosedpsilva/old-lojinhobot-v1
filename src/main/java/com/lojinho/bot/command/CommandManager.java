@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 
 import com.lojinho.bot.command.commands.core.HelpCommand;
 import com.lojinho.bot.command.commands.core.PingCommand;
-import com.lojinho.bot.command.commands.core.ShutdownCommand;
 import com.lojinho.bot.command.commands.info.AvatarCommand;
 import com.lojinho.bot.command.commands.info.InviteCommand;
 import com.lojinho.bot.command.commands.info.SupportCommand;
@@ -21,6 +20,7 @@ import com.lojinho.bot.command.commands.moderation.PrefixCommand;
 import com.lojinho.bot.command.commands.moderation.SoftBanCommand;
 import com.lojinho.bot.command.commands.moderation.UnbanCommand;
 import com.lojinho.bot.command.commands.moderation.WarnCommand;
+import com.lojinho.bot.command.commands.owner.ShutdownCommand;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
@@ -31,6 +31,14 @@ public class CommandManager {
   private final List<ICommand> commands = new ArrayList<>();
 
   public CommandManager() {
+    // Core
+    addCommand(new ShutdownCommand());
+    addCommand(new HelpCommand(this));
+    addCommand(new PingCommand());
+    // Info
+    addCommand(new AvatarCommand());
+    addCommand(new InviteCommand());
+    addCommand(new SupportCommand());
     // moderation
     addCommand(new PrefixCommand());
     addCommand(new DelmsgCommand());
@@ -39,14 +47,6 @@ public class CommandManager {
     addCommand(new SoftBanCommand());
     addCommand(new BanCommand());
     addCommand(new UnbanCommand());
-    // Info
-    addCommand(new AvatarCommand());
-    addCommand(new InviteCommand());
-    addCommand(new SupportCommand());
-    // Core
-    addCommand(new ShutdownCommand());
-    addCommand(new HelpCommand(this));
-    addCommand(new PingCommand());
   }
 
   private void addCommand(ICommand cmd) {

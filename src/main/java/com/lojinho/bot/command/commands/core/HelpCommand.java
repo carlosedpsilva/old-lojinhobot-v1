@@ -39,6 +39,10 @@ public class HelpCommand implements ICommand {
               "Lista completa de comandos. Para mais detalhes utilize " + Config.get("PREFIX") + "help <comando>");
 
       for (String category : categories) {
+        if (category.equals("Owner")) {
+          continue;
+        }
+
         List<String> commandsInThisCategory = new ArrayList<String>();
         for (String entry : manager.getCategories().keySet()) {
           if (category.equals(manager.getCategories().get(entry))) {
