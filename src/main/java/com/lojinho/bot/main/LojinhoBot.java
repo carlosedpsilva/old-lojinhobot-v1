@@ -1,7 +1,8 @@
-package com.lojinho.bot;
+package com.lojinho.bot.main;
 
 import com.lojinho.bot.core.listeners.LojinhoListener;
 import com.lojinho.bot.data.Config;
+import com.lojinho.bot.db.DbUpdate;
 
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -23,6 +24,8 @@ public class LojinhoBot {
   }
 
   public static void main(final String[] args) throws Exception {
+    DbUpdate dbUpdate = new DbUpdate();
+    dbUpdate.updateToCurrent();
     new LojinhoBot();
   }
 }

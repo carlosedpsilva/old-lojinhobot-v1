@@ -3,7 +3,7 @@ package com.lojinho.bot.core.listeners;
 import javax.annotation.Nonnull;
 
 import com.lojinho.bot.command.CommandManager;
-import com.lojinho.bot.db.DatabaseManager;
+import com.lojinho.bot.db.DbManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class LojinhoListener extends ListenerAdapter {
     }
 
     final long guildId = event.getGuild().getIdLong();
-    String prefix = DatabaseManager.INSTANCE.getPrefix(guildId);
+    String prefix = DbManager.INSTANCE.getPrefix(guildId);
     String raw = event.getMessage().getContentRaw();
 
     if (raw.startsWith(prefix)) {

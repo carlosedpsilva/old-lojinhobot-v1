@@ -1,11 +1,11 @@
-package com.lojinho.bot.command.commands.moderation;
+package com.lojinho.bot.command.commands.info;
 
 import java.util.List;
 
 import com.lojinho.bot.command.CommandContext;
 import com.lojinho.bot.command.ICommand;
 import com.lojinho.bot.data.Config;
-import com.lojinho.bot.db.DatabaseManager;
+import com.lojinho.bot.db.DbManager;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -20,12 +20,12 @@ public class PrefixCommand implements ICommand {
     final Member member = ctx.getMember();
     final long guildId = ctx.getGuild().getIdLong();
 
-    // Tratar permissões
     if (args.isEmpty()) {
-      channel.sendMessage("Prefix: `" + DatabaseManager.INSTANCE.getPrefix(guildId) + "`").queue();
+      channel.sendMessage("Prefix: `" + DbManager.INSTANCE.getPrefix(guildId) + "`").queue();
       return;
     }
 
+    // Tratar permissões
     if (!member.hasPermission(Permission.MANAGE_CHANNEL)) {
       channel.sendMessage("Você deve possuir a permissão Gerenciar Canais para usar este comando").queue();
       return;
@@ -40,7 +40,7 @@ public class PrefixCommand implements ICommand {
 
   @Override
   public String getCategory() {
-    return "Moderation";
+    return "Info";
   }
 
   @Override
@@ -69,7 +69,7 @@ public class PrefixCommand implements ICommand {
   }
 
   private void updatePrefix(long guildId, String newPrefix) {
-    DatabaseManager.INSTANCE.setPrefix(guildId, newPrefix);
+    DbManager.INSTANCE.setPrefix(guildId, newPrefix);
   }
 
 }
