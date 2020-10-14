@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import com.lojinho.bot.command.CommandContext;
 import com.lojinho.bot.command.ICommand;
 import com.lojinho.bot.data.Config;
-import com.lojinho.bot.utils.Utils;
+import com.lojinho.bot.util.Utils;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;

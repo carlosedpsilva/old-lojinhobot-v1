@@ -42,6 +42,11 @@ public class DbHandler implements DbManager {
     config.setJdbcUrl("jdbc:mysql://localhost:3306/lojinhobot?serverTimezone=America/Sao_Paulo");
     config.setUsername("root");
     config.setPassword("batata");
+    config.addDataSourceProperty("minimumIdle", "2");
+    config.addDataSourceProperty("maximumPoolSize", "10");
+    config.addDataSourceProperty("idleTimeout", "120000");
+    config.addDataSourceProperty("connectionTimeout", "300000");
+    config.addDataSourceProperty("leakDetectionThreshold", "300000");
     config.addDataSourceProperty("cachePrepStmts", "true");
     config.addDataSourceProperty("prepStmtCacheSize", "250");
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -67,6 +72,8 @@ public class DbHandler implements DbManager {
         query.setLong(index, (Long) p);
       } else if (p instanceof Double) {
         query.setDouble(index, (double) p);
+      } else if (p instanceof Boolean) {
+        query.setBoolean(index, (Boolean) p);
       } else if (p instanceof java.sql.Date) {
         java.sql.Date d = (java.sql.Date) p;
         Timestamp ts = new Timestamp(d.getTime());
@@ -95,21 +102,45 @@ public class DbHandler implements DbManager {
 
   @Override
   public ResultSet select(String sql, Object... params) throws SQLException {
-    PreparedStatement query = getConnection().prepareStatement(sql);
-    resolveParameters(query, params);
-    return query.executeQuery();
+    try (Connection conn = getConnection();
+        Statement statement = conn.createStatement();
+        PreparedStatement query = conn.prepareStatement(sql)) {
+      try {
+        statement.executeUpdate("SET NAMES utf8mb4");
+      } catch (SQLException e) {
+        System.out.println(e.getMessage());
+        System.out.println("COULD NOT SET utf8mb4");
+      }
+      resolveParameters(query, params);
+      return query.executeQuery();
+    }
   }
 
   @Override
   public int query(String sql) throws SQLException {
-    try (Statement statement = getConnection().createStatement()) {
+    try (Connection conn = getConnection();
+        Statement statement = conn.createStatement()) {
+      try {
+        statement.executeUpdate("SET NAMES utf8mb4");
+      } catch (SQLException e) {
+        System.out.println(e.getMessage());
+        System.out.println("COULD NOT SET utf8mb4");
+      }
       return statement.executeUpdate(sql);
     }
   }
 
   @Override
   public int query(String sql, Object... params) throws SQLException {
-    try (PreparedStatement query = getConnection().prepareStatement(sql)) {
+    try (Connection conn = getConnection();
+        Statement statement = conn.createStatement();
+        PreparedStatement query = conn.prepareStatement(sql)) {
+      try {
+        statement.executeUpdate("SET NAMES utf8mb4");
+      } catch (SQLException e) {
+        System.out.println(e.getMessage());
+        System.out.println("COULD NOT SET utf8mb4");
+      }
       resolveParameters(query, params);
       return query.executeUpdate();
     }
@@ -117,7 +148,15 @@ public class DbHandler implements DbManager {
 
   @Override
   public int insert(String sql, Object... params) throws SQLException {
-    try (PreparedStatement query = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    try (Connection conn = getConnection();
+        Statement statement = conn.createStatement();
+        PreparedStatement query = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+      try {
+        statement.executeUpdate("SET NAMES utf8mb4");
+      } catch (SQLException e) {
+        System.out.println(e.getMessage());
+        System.out.println("COULD NOT SET utf8mb4");
+      }
       resolveParameters(query, params);
       query.executeUpdate();
       ResultSet rs = query.getGeneratedKeys();

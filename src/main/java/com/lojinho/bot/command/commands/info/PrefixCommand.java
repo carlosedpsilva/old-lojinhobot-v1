@@ -69,7 +69,7 @@ public class PrefixCommand implements ICommand {
   }
 
   private void updatePrefix(long guildId, String newPrefix) {
-    DbManager.INSTANCE.setPrefix(guildId, newPrefix);
+    return;
   }
 
 }
