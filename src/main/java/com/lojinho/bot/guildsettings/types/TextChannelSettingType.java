@@ -1,8 +1,7 @@
 package com.lojinho.bot.guildsettings.types;
 
 import com.lojinho.bot.guildsettings.IGuildSettingType;
-import com.lojinho.bot.util.Emojibet;
-import com.lojinho.bot.util.Utils;
+import com.lojinho.bot.util.DisUtil;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -25,11 +24,11 @@ public class TextChannelSettingType implements IGuildSettingType {
       return true;
     }
     // Busca por menção
-    if (Utils.isChannelMention(value)) {
-      return guild.getTextChannelById(Utils.mentionToId(value)) != null;
+    if (DisUtil.isChannelMention(value)) {
+      return guild.getTextChannelById(DisUtil.mentionToId(value)) != null;
     }
     // Busca pelo value
-    return Utils.findChannel(guild, value) != null;
+    return DisUtil.findTextChannel(guild, value) != null;
   }
 
   @Override
@@ -37,15 +36,8 @@ public class TextChannelSettingType implements IGuildSettingType {
     if (allowNull && (value == null || value.isEmpty() || value.equalsIgnoreCase("false"))) {
       return "";
     }
-    // Busca por menção
-    if (Utils.isChannelMention(value)) {
-      TextChannel textChannel = guild.getTextChannelById(Utils.mentionToId(value));
-      if (textChannel != null) {
-        return textChannel.getId();
-      }
-    }
     // Busca pelo value
-    TextChannel channel = Utils.findChannel(guild, value);
+    TextChannel channel = DisUtil.findTextChannel(guild, value);
     if (channel != null) {
       return channel.getId();
     }
@@ -55,14 +47,14 @@ public class TextChannelSettingType implements IGuildSettingType {
   @Override
   public String toDisplay(Guild guild, String value) {
     if (value == null || value.isEmpty() || !value.matches("\\d{10,}")) {
-      return Emojibet.X;
+      return "desabilitado";
     }
     // Busca pelo value
     TextChannel channel = guild.getTextChannelById(value);
     if (channel != null) {
       return channel.getName();
     }
-    return Emojibet.X;
+    return "desabilitado";
   }
 
 }

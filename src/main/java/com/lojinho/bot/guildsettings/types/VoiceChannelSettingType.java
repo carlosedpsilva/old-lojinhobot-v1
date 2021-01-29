@@ -1,8 +1,7 @@
 package com.lojinho.bot.guildsettings.types;
 
 import com.lojinho.bot.guildsettings.IGuildSettingType;
-import com.lojinho.bot.util.Emojibet;
-import com.lojinho.bot.util.Utils;
+import com.lojinho.bot.util.DisUtil;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -25,11 +24,11 @@ public class VoiceChannelSettingType implements IGuildSettingType {
       return true;
     }
     // Busca por menção
-    if (Utils.isChannelMention(value)) {
-      return guild.getVoiceChannelById(Utils.mentionToId(value)) != null;
+    if (DisUtil.isChannelMention(value)) {
+      return guild.getVoiceChannelById(DisUtil.mentionToId(value)) != null;
     }
     // Busca pelo value
-    return Utils.findVoiceChannel(guild, value) != null;
+    return DisUtil.findVoiceChannel(guild, value) != null;
   }
 
   @Override
@@ -38,14 +37,14 @@ public class VoiceChannelSettingType implements IGuildSettingType {
       return "";
     }
     // Busca por menção
-    if (Utils.isChannelMention(value)) {
-      VoiceChannel channel = guild.getVoiceChannelById(Utils.mentionToId(value));
+    if (DisUtil.isChannelMention(value)) {
+      VoiceChannel channel = guild.getVoiceChannelById(DisUtil.mentionToId(value));
       if (channel != null) {
         return channel.getId();
       }
     }
     // Busca pelo nome
-    VoiceChannel channel = Utils.findVoiceChannel(guild, value);
+    VoiceChannel channel = DisUtil.findVoiceChannel(guild, value);
     if (channel != null) {
       return channel.getId();
     }
@@ -55,14 +54,14 @@ public class VoiceChannelSettingType implements IGuildSettingType {
   @Override
   public String toDisplay(Guild guild, String value) {
     if (value == null || value.isEmpty() || !value.matches("\\d{10,}")) {
-      return Emojibet.X;
+      return "desabilitado";
     }
     // Busca pelo value
     VoiceChannel voiceChannel = guild.getVoiceChannelById(value);
     if (voiceChannel != null) {
       return voiceChannel.getName();
     }
-    return Emojibet.X;
+    return "desabilitado";
   }
 
 }

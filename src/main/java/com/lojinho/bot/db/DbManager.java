@@ -16,8 +16,4 @@ public interface DbManager {
   int query(String sql, Object... params) throws SQLException;
 
   int insert(String sql, Object... params) throws SQLException;
-
-  String getPrefix(long guildId);
-
-  void setPrefix(long guildId, String newPrefix);
 }

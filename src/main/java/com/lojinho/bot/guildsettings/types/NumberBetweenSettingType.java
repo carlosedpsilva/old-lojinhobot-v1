@@ -14,15 +14,18 @@ public class NumberBetweenSettingType implements IGuildSettingType {
 
   @Override
   public String typeName() {
-    return "enum";
+    return "number-between";
   }
 
   @Override
   public boolean validate(Guild guild, String value) {
     try {
       int vol = Integer.parseInt(value);
-      if (vol >= min && vol <= max) { return true; }
-    } catch (Exception ignored) { }
+      if (vol >= min && vol <= max) {
+        return true;
+      }
+    } catch (Exception ignored) {
+    }
     return false;
   }
 
@@ -30,8 +33,11 @@ public class NumberBetweenSettingType implements IGuildSettingType {
   public String fromInput(Guild guild, String value) {
     try {
       int vol = Integer.parseInt(value);
-      if (vol >= min && vol <= max) { return "" + vol; }
-    } catch (Exception ignored) { }
+      if (vol >= min && vol <= max) {
+        return "" + vol;
+      }
+    } catch (Exception ignored) {
+    }
     return "";
   }
 

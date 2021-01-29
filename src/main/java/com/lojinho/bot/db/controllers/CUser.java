@@ -3,7 +3,6 @@ package com.lojinho.bot.db.controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,8 +34,9 @@ public class CUser {
         user.name = EmojiUtils.shortCodify(username);
         update(user);
       }
+      userCache.put(discordId, user.id);
     }
-    return 0;
+    return userCache.get(discordId);
   }
 
   public static long getCachedDiscordId(int userId) {
@@ -48,6 +48,10 @@ public class CUser {
       discordCache.put(userId, Long.parseLong(user.discord_id));
     }
     return discordCache.get(userId);
+  }
+
+  public static OUser findBy(String discordId) {
+    return findBy(Long.valueOf(discordId));
   }
 
   public static OUser findBy(long discordId) {
@@ -98,16 +102,14 @@ public class CUser {
     return list;
   }
 
-  /* Atualiza o número de comandos usados */
   public static void registerCommandUse(int userId) {
     try {
-      DbHandler.INSTANCE.query("UPDATE users SET commands_used = commands_used + 1" + "WHERE id = ?", userId);
+      DbHandler.INSTANCE.query("UPDATE users SET commands_used = commands_used + 1 " + "WHERE id = ?", userId);
     } catch (SQLException e) {
       e.printStackTrace();
     }
   }
 
-  /* Insere se for novo usuário, atualiza se for existente */
   public static void update(OUser record) {
     if (record.id == 0) {
       insert(record);
@@ -121,23 +123,11 @@ public class CUser {
     }
   }
 
-  /* Insere o registro no banco de dados */
   public static void insert(OUser record) {
     try {
       record.id = DbHandler.INSTANCE.insert(
           "INSERT INTO users (discord_id, name, commands_used, banned) " + "VALUES (?, ?, ?, ?)", record.discord_id,
           record.name, record.commands_used, record.banned);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /* Adiciona Ids dos usuários banidos ao HashSet passado */
-  public static void addBannedUserIds(HashSet<Long> bannedUsers) {
-    try (ResultSet rs = DbHandler.INSTANCE.select("SELECT * FROM users WHERE banned = true")) {
-      while (rs.next()) {
-        bannedUsers.add(rs.getLong("discord_id"));
-      }
     } catch (SQLException e) {
       e.printStackTrace();
     }

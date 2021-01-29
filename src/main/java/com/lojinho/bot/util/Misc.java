@@ -1,7 +1,10 @@
 package com.lojinho.bot.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,5 +73,84 @@ public class Misc {
       }
     }
     return "0";
+  }
+
+  public static HashMap<String, List<String>> getArgOptionsOf(List<String> args) {
+    HashMap<String, List<String>> argOptions = new HashMap<>();
+    List<String> argSection = new ArrayList<>();
+    String option = "";
+
+    for (String arg : args) {
+      if (arg.startsWith("--")) {
+        if (!argSection.isEmpty() && !option.isEmpty()) {
+          argOptions.put(option, argSection);
+          argSection = new ArrayList<>();
+        }
+        option = arg.replaceFirst("(?i)" + Pattern.quote("--"), "");
+        continue;
+      }
+      argSection.add(arg);
+    }
+
+    if (!argSection.isEmpty() && !option.isEmpty())
+      argOptions.put(option, argSection);
+
+    return argOptions;
+  }
+
+  /**
+   * @param items items in the controllers
+   * @return formatted controllers
+   */
+  public static String makeTable(List<String> items) {
+    return makeTable(items, 16, 4);
+  }
+
+  /**
+   * Makes a controllers-like display of list of items
+   *
+   * @param items        items in the controllers
+   * @param columnLength length of a column(filled up with whitespace)
+   * @param columns      amount of columns
+   * @return formatted controllers
+   */
+  public static String makeTable(List<String> items, int columnLength, int columns) {
+    StringBuilder ret = new StringBuilder("```xl\n");
+    int counter = 0;
+    for (String item : items) {
+      counter++;
+      ret.append(String.format("%-" + columnLength + "s", item));
+      if (counter % columns == 0) {
+        ret.append("\n");
+      }
+    }
+    if (counter % columns != 0) {
+      ret.append("\n");
+    }
+    return ret + "```\n";
+  }
+
+  /**
+   * @param tableText text
+   * @return formatted controllers
+   */
+  public static String makeTable(String tableText) {
+    return "```\n" + tableText + "\n```\n";
+  }
+
+  public static int parseInt(String intString, int fallback) {
+    try {
+      return Integer.parseInt(intString);
+    } catch (NumberFormatException e) {
+      return fallback;
+    }
+  }
+
+  public static long parseLong(String longstr, int fallback) {
+    try {
+      return Long.parseLong(longstr);
+    } catch (NumberFormatException e) {
+      return fallback;
+    }
   }
 }

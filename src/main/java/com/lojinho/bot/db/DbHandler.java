@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
 
-import com.lojinho.bot.data.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -105,12 +104,15 @@ public class DbHandler implements DbManager {
     try (Connection conn = getConnection();
         Statement statement = conn.createStatement();
         PreparedStatement query = conn.prepareStatement(sql)) {
+
+      // set utf8mb4 before
       try {
         statement.executeUpdate("SET NAMES utf8mb4");
       } catch (SQLException e) {
         System.out.println(e.getMessage());
         System.out.println("COULD NOT SET utf8mb4");
       }
+
       resolveParameters(query, params);
       return query.executeQuery();
     }
@@ -118,14 +120,16 @@ public class DbHandler implements DbManager {
 
   @Override
   public int query(String sql) throws SQLException {
-    try (Connection conn = getConnection();
-        Statement statement = conn.createStatement()) {
+    try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
+
+      // set utf8mb4 before
       try {
         statement.executeUpdate("SET NAMES utf8mb4");
       } catch (SQLException e) {
         System.out.println(e.getMessage());
         System.out.println("COULD NOT SET utf8mb4");
       }
+
       return statement.executeUpdate(sql);
     }
   }
@@ -135,12 +139,15 @@ public class DbHandler implements DbManager {
     try (Connection conn = getConnection();
         Statement statement = conn.createStatement();
         PreparedStatement query = conn.prepareStatement(sql)) {
+
+      // set utf8mb4 before
       try {
         statement.executeUpdate("SET NAMES utf8mb4");
       } catch (SQLException e) {
         System.out.println(e.getMessage());
         System.out.println("COULD NOT SET utf8mb4");
       }
+
       resolveParameters(query, params);
       return query.executeUpdate();
     }
@@ -151,12 +158,15 @@ public class DbHandler implements DbManager {
     try (Connection conn = getConnection();
         Statement statement = conn.createStatement();
         PreparedStatement query = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+      // set utf8mb4 before
       try {
         statement.executeUpdate("SET NAMES utf8mb4");
       } catch (SQLException e) {
         System.out.println(e.getMessage());
         System.out.println("COULD NOT SET utf8mb4");
       }
+
       resolveParameters(query, params);
       query.executeUpdate();
       ResultSet rs = query.getGeneratedKeys();
@@ -165,46 +175,6 @@ public class DbHandler implements DbManager {
         return rs.getInt(1);
       }
     }
-    return -1;
-  }
-
-  @Override
-  public String getPrefix(long guildId) {
-    try (final PreparedStatement preparedStatement = this.getConnection()
-        .prepareStatement("SELECT prefix FROM guild_settings WHERE guild_id = ?")) {
-
-      preparedStatement.setString(1, String.valueOf(guildId));
-
-      try (final ResultSet resultSet = preparedStatement.executeQuery()) {
-        if (resultSet.next()) {
-          return resultSet.getString("prefix");
-        }
-      }
-
-      try (final PreparedStatement insertStatement = this.getConnection()
-          .prepareStatement("INSERT INTO guild_settings(guild_id) VALUES(?)")) {
-
-        insertStatement.setString(1, String.valueOf(guildId));
-
-        insertStatement.execute();
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    return Config.get("PREFIX");
-  }
-
-  @Override
-  public void setPrefix(long guildId, String newPrefix) {
-    try (final PreparedStatement preparedStatement = this.getConnection()
-        .prepareStatement("UPDATE guild_settings SET prefix = ? WHERE guild_id = ?")) {
-      preparedStatement.setString(1, newPrefix);
-      preparedStatement.setString(2, String.valueOf(guildId));
-
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
+    return -1; // failed somehow
   }
 }
